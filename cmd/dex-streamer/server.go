@@ -4,9 +4,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	erc20 "github.com/toamto94/dex-streamer.git/pkg/abigen/erc20"
+	uniswapV3Pair "github.com/toamto94/dex-streamer.git/pkg/abigen/uniswapV3Pair"
 	"github.com/toamto94/dex-streamer.git/pkg/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -35,8 +37,6 @@ func (server *DEXStreamerServerImp) StreamContract(contract *proto.Contract, str
 		log.Printf("Connection to EVM endpoint established")
 	}
 	address := common.HexToAddress(contract.Address)
-	sender := common.HexToAddress("0x0000000000000000000000000000000000000000")
-	_ = client
 	done := make(chan bool)
 	ticker := time.NewTicker(time.Millisecond * time.Duration(contract.ScrapeInterval))
 	defer ticker.Stop()
@@ -47,26 +47,31 @@ func (server *DEXStreamerServerImp) StreamContract(contract *proto.Contract, str
 			fmt.Println("Done")
 			return nil
 		case <-ticker.C:
-			//abi.New
-			blocknumber, _ := client.BlockNumber(context.Background())
-			//msgData :=
-			msg := ethereum.CallMsg{
-				From: sender,
-				To:   &address,
-				Gas:  0,
-				Data: []byte("1a686502"),
+			blocknumber, _ := client.BlockNumber(context.TODO())
+
+			pairInstance, err := uniswapV3Pair.NewUniswapV3PairAbigen(address, client)
+
+			callOpts := bind.CallOpts{
+				Pending:     false,
+				BlockNumber: big.NewInt(int64(blocknumber)),
+				Context:     context.Background(),
 			}
 
-			reserve0, err := client.CallContract(context.Background(), msg, big.NewInt(int64(blocknumber)))
-			fmt.Println(reserve0)
+			token0, err := pairInstance.Token0(&callOpts)
+			token1, err := pairInstance.Token1(&callOpts)
+
+			token0Instance, err := erc20.NewErc20Abigen(token0, client)
+			token1Instance, err := erc20.NewErc20Abigen(token1, client)
+
+			fmt.Println(token0Instance.BalanceOf(&callOpts, address))
+			fmt.Println(token1Instance.BalanceOf(&callOpts, address))
+
 			if err != nil {
-				log.Fatalf("Low level call failed - %v", err)
+				log.Fatalf("API call failed - %v", err)
 			} else {
-				response := proto.Response{Tbd: string(reserve0)}
+				response := proto.Response{Tbd: "a"}
 				stream.Send(&response)
 			}
-			//blocknumber, _ := client.BlockNumber(context.Background())
-			//result, _ := client.BalanceAt(context.Background(), address, big.NewInt(int64(blocknumber)))
 
 		}
 	}

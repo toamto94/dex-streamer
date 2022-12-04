@@ -7,9 +7,9 @@ service DEXStreamer {
 
 message Contract {
   string endpoint = 1;
-  string chainId = 2;
+  string chain = 2;
   string address = 3;
-  string abi = 4;
+  string dex = 4;
   uint32 scrapeInterval = 5;
 }
 

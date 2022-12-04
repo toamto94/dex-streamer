@@ -32,9 +32,9 @@ func main() {
 
 	contract := proto.Contract{
 		Endpoint:       "https://mainnet.infura.io/v3/4821cb96059a4d9eb05435da1f54fdad",
-		ChainId:        "b",
+		Chain:          "ethereum",
+		Dex:            "uniswapV3",
 		Address:        "0x4585FE77225b41b697C938B018E2Ac67Ac5a20c0",
-		Abi:            "d",
 		ScrapeInterval: 900,
 	}
 
