@@ -1,0 +1,25 @@
+syntax = "proto3";
+option go_package = "/proto";
+
+service APIStream {
+  rpc StreamContract(Contract) returns (stream Response) {}
+}
+
+message Contract {
+  string endpoint = 1;
+  string chainId = 2;
+  string address = 3;
+  int32 scrapeInterval = 4;
+}
+
+
+message Response {
+  string tbd = 1;
+}
+
+//protoc --go_out=./pkg/proto --go_opt=paths=source_relative \
+//    --go-grpc_out=./pkg/proto --go-grpc_opt=paths=source_relative \
+//    service-definition.proto
+
+
+
