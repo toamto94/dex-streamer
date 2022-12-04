@@ -1,7 +1,7 @@
 syntax = "proto3";
 option go_package = "/proto";
 
-service APIStream {
+service DEXStreamer {
   rpc StreamContract(Contract) returns (stream Response) {}
 }
 
@@ -9,7 +9,8 @@ message Contract {
   string endpoint = 1;
   string chainId = 2;
   string address = 3;
-  int32 scrapeInterval = 4;
+  string abi = 4;
+  uint32 scrapeInterval = 5;
 }
 
 

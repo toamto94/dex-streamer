@@ -18,27 +18,27 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// APIStreamClient is the client API for APIStream service.
+// DEXStreamerClient is the client API for DEXStreamer service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type APIStreamClient interface {
-	StreamContract(ctx context.Context, in *Contract, opts ...grpc.CallOption) (APIStream_StreamContractClient, error)
+type DEXStreamerClient interface {
+	StreamContract(ctx context.Context, in *Contract, opts ...grpc.CallOption) (DEXStreamer_StreamContractClient, error)
 }
 
-type aPIStreamClient struct {
+type dEXStreamerClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAPIStreamClient(cc grpc.ClientConnInterface) APIStreamClient {
-	return &aPIStreamClient{cc}
+func NewDEXStreamerClient(cc grpc.ClientConnInterface) DEXStreamerClient {
+	return &dEXStreamerClient{cc}
 }
 
-func (c *aPIStreamClient) StreamContract(ctx context.Context, in *Contract, opts ...grpc.CallOption) (APIStream_StreamContractClient, error) {
-	stream, err := c.cc.NewStream(ctx, &APIStream_ServiceDesc.Streams[0], "/APIStream/StreamContract", opts...)
+func (c *dEXStreamerClient) StreamContract(ctx context.Context, in *Contract, opts ...grpc.CallOption) (DEXStreamer_StreamContractClient, error) {
+	stream, err := c.cc.NewStream(ctx, &DEXStreamer_ServiceDesc.Streams[0], "/DEXStreamer/StreamContract", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &aPIStreamStreamContractClient{stream}
+	x := &dEXStreamerStreamContractClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -48,16 +48,16 @@ func (c *aPIStreamClient) StreamContract(ctx context.Context, in *Contract, opts
 	return x, nil
 }
 
-type APIStream_StreamContractClient interface {
+type DEXStreamer_StreamContractClient interface {
 	Recv() (*Response, error)
 	grpc.ClientStream
 }
 
-type aPIStreamStreamContractClient struct {
+type dEXStreamerStreamContractClient struct {
 	grpc.ClientStream
 }
 
-func (x *aPIStreamStreamContractClient) Recv() (*Response, error) {
+func (x *dEXStreamerStreamContractClient) Recv() (*Response, error) {
 	m := new(Response)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -65,66 +65,66 @@ func (x *aPIStreamStreamContractClient) Recv() (*Response, error) {
 	return m, nil
 }
 
-// APIStreamServer is the server API for APIStream service.
-// All implementations must embed UnimplementedAPIStreamServer
+// DEXStreamerServer is the server API for DEXStreamer service.
+// All implementations must embed UnimplementedDEXStreamerServer
 // for forward compatibility
-type APIStreamServer interface {
-	StreamContract(*Contract, APIStream_StreamContractServer) error
-	mustEmbedUnimplementedAPIStreamServer()
+type DEXStreamerServer interface {
+	StreamContract(*Contract, DEXStreamer_StreamContractServer) error
+	mustEmbedUnimplementedDEXStreamerServer()
 }
 
-// UnimplementedAPIStreamServer must be embedded to have forward compatible implementations.
-type UnimplementedAPIStreamServer struct {
+// UnimplementedDEXStreamerServer must be embedded to have forward compatible implementations.
+type UnimplementedDEXStreamerServer struct {
 }
 
-func (UnimplementedAPIStreamServer) StreamContract(*Contract, APIStream_StreamContractServer) error {
+func (UnimplementedDEXStreamerServer) StreamContract(*Contract, DEXStreamer_StreamContractServer) error {
 	return status.Errorf(codes.Unimplemented, "method StreamContract not implemented")
 }
-func (UnimplementedAPIStreamServer) mustEmbedUnimplementedAPIStreamServer() {}
+func (UnimplementedDEXStreamerServer) mustEmbedUnimplementedDEXStreamerServer() {}
 
-// UnsafeAPIStreamServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to APIStreamServer will
+// UnsafeDEXStreamerServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DEXStreamerServer will
 // result in compilation errors.
-type UnsafeAPIStreamServer interface {
-	mustEmbedUnimplementedAPIStreamServer()
+type UnsafeDEXStreamerServer interface {
+	mustEmbedUnimplementedDEXStreamerServer()
 }
 
-func RegisterAPIStreamServer(s grpc.ServiceRegistrar, srv APIStreamServer) {
-	s.RegisterService(&APIStream_ServiceDesc, srv)
+func RegisterDEXStreamerServer(s grpc.ServiceRegistrar, srv DEXStreamerServer) {
+	s.RegisterService(&DEXStreamer_ServiceDesc, srv)
 }
 
-func _APIStream_StreamContract_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _DEXStreamer_StreamContract_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(Contract)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(APIStreamServer).StreamContract(m, &aPIStreamStreamContractServer{stream})
+	return srv.(DEXStreamerServer).StreamContract(m, &dEXStreamerStreamContractServer{stream})
 }
 
-type APIStream_StreamContractServer interface {
+type DEXStreamer_StreamContractServer interface {
 	Send(*Response) error
 	grpc.ServerStream
 }
 
-type aPIStreamStreamContractServer struct {
+type dEXStreamerStreamContractServer struct {
 	grpc.ServerStream
 }
 
-func (x *aPIStreamStreamContractServer) Send(m *Response) error {
+func (x *dEXStreamerStreamContractServer) Send(m *Response) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-// APIStream_ServiceDesc is the grpc.ServiceDesc for APIStream service.
+// DEXStreamer_ServiceDesc is the grpc.ServiceDesc for DEXStreamer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var APIStream_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "APIStream",
-	HandlerType: (*APIStreamServer)(nil),
+var DEXStreamer_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "DEXStreamer",
+	HandlerType: (*DEXStreamerServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "StreamContract",
-			Handler:       _APIStream_StreamContract_Handler,
+			Handler:       _DEXStreamer_StreamContract_Handler,
 			ServerStreams: true,
 		},
 	},
