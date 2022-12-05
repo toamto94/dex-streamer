@@ -15,6 +15,7 @@ import (
 var (
 	endpoint = flag.String("e", "localhost", "API endpoint to connect with")
 	port     = flag.Int64("p", 50051, "Endpoint port")
+	infuraId = flag.String("i", "", "Infura Project ID")
 )
 
 func main() {
@@ -31,23 +32,23 @@ func main() {
 	client := proto.NewDEXStreamerClient(conn)
 
 	contract := proto.Contract{
-		Endpoint:       "https://mainnet.infura.io/v3/4821cb96059a4d9eb05435da1f54fdad",
+		Endpoint:       "https://mainnet.infura.io/v3/" + *infuraId,
 		Chain:          "ethereum",
 		Dex:            "uniswapV3",
-		Address:        "0x4585FE77225b41b697C938B018E2Ac67Ac5a20c0",
-		ScrapeInterval: 900,
+		Address:        "0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640",
+		ScrapeInterval: 100000,
 	}
 
 	stream, err := client.StreamContract(context.Background(), &contract)
 
 	for {
-		feature, err := stream.Recv()
+		tick, err := stream.Recv()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
 			log.Fatalf("Stream interrupted - %v", err)
 		}
-		log.Println(feature)
+		log.Println(tick)
 	}
 }

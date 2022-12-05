@@ -15,7 +15,11 @@ message Contract {
 
 
 message Response {
-  string tbd = 1;
+  string timeStamp = 1;
+  string token0 = 2;
+  string token1 = 3;
+  int32 blocknumber = 4;
+  float spotPrice = 5;
 }
 
 //protoc --go_out=./pkg/proto --go_opt=paths=source_relative \
