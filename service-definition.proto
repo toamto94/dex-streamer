@@ -1,0 +1,30 @@
+syntax = "proto3";
+option go_package = "/proto";
+
+service DEXStreamer {
+  rpc StreamContract(Contract) returns (stream Response) {}
+}
+
+message Contract {
+  string endpoint = 1;
+  string chain = 2;
+  string address = 3;
+  string dex = 4;
+  uint32 scrapeInterval = 5;
+}
+
+
+message Response {
+  string timeStamp = 1;
+  string token0 = 2;
+  string token1 = 3;
+  int32 blocknumber = 4;
+  float spotPrice = 5;
+}
+
+//protoc --go_out=./pkg/proto --go_opt=paths=source_relative \
+//    --go-grpc_out=./pkg/proto --go-grpc_opt=paths=source_relative \
+//    service-definition.proto
+
+
+
